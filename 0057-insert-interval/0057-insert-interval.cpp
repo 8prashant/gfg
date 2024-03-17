@@ -1,31 +1,25 @@
 class Solution {
 public:
-    vector<vector<int>> insert(vector<vector<int>>& nums, vector<int>& ni) {
-        if(nums.size() == 0) {
-            return {ni};
-        }
-        
-        int low = 0;
-        vector<vector<int>> v;
-        
-        // Insert intervals before ni
-        while (low < nums.size() && nums[low][1] < ni[0]) {
-            v.push_back(nums[low++]);
+    vector<vector<int>> insert(vector<vector<int>>& existingIntervals, vector<int>& newInterval) {
+        vector<vector<int>> mergedIntervals;
+        int currentIntervalIndex = 0;
+
+        while (currentIntervalIndex < existingIntervals.size() && existingIntervals[currentIntervalIndex][1] < newInterval[0]) {
+            mergedIntervals.push_back(existingIntervals[currentIntervalIndex++]);
         }
 
-        // Merge intervals overlapping with ni
-        while (low < nums.size() && nums[low][0] <= ni[1]) {
-            ni[0] = min(ni[0], nums[low][0]);
-            ni[1] = max(ni[1], nums[low][1]);
-            low++;
-        }
-        v.push_back(ni);
-
-        // Insert remaining intervals
-        while (low < nums.size()) {
-            v.push_back(nums[low++]);
+        while (currentIntervalIndex < existingIntervals.size() && existingIntervals[currentIntervalIndex][0] <= newInterval[1]) {
+            newInterval[0] = min(existingIntervals[currentIntervalIndex][0], newInterval[0]);
+            newInterval[1] = max(existingIntervals[currentIntervalIndex][1], newInterval[1]);
+            currentIntervalIndex++;
         }
 
-        return v;
+        mergedIntervals.push_back(newInterval);
+
+        while (currentIntervalIndex < existingIntervals.size()) {
+            mergedIntervals.push_back(existingIntervals[currentIntervalIndex++]);
+        }
+
+        return mergedIntervals;
     }
 };
